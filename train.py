@@ -9,7 +9,7 @@ import wandb
 if __name__ == '__main__':
     pl.seed_everything(42)
     tokenizer = WordPieceTokenizer()
-    dm = ChatbotDataModule(batch_size=32, tokenizer=tokenizer)
+    dm = ChatbotDataModule(batch_size=16, tokenizer=tokenizer)
     model = LitTransformer(
         tokenizer=tokenizer,
         vocab_size=2**14, # 16384
