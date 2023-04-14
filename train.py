@@ -6,10 +6,14 @@ from data import ChatbotDataModule
 from model import LitTransformer
 import wandb
 
+import warnings
+warnings.filterwarnings('ignore', '*Consider increasing the value of the `num_workers` argument*')
+warnings.filterwarnings('ignore', '*There is a wandb run already in progress*')
+
 if __name__ == '__main__':
     pl.seed_everything(42)
     tokenizer = WordPieceTokenizer()
-    dm = ChatbotDataModule(batch_size=16, tokenizer=tokenizer)
+    dm = ChatbotDataModule(batch_size=32, max_length=64, tokenizer=tokenizer)
     model = LitTransformer(
         tokenizer=tokenizer,
         vocab_size=2**14, # 16384
@@ -34,7 +38,7 @@ if __name__ == '__main__':
     #     lr=0.0014,
     #     num_warmup_steps=4000
     # )
-    wandb.init(project='transformer_from_scratch')
+    wandb.init(project='transformer_from_scratch', mode='offline')
     trainer = pl.Trainer(
         max_epochs=50,
         check_val_every_n_epoch=5,
