@@ -13,12 +13,12 @@ class LitTransformer(pl.LightningModule):
         self.save_hyperparameters(ignore=['tokenizer'])
         self.tokenizer = tokenizer
         self.model = Transformer(**kwargs)
-        self.example_input_array = {
-            'enc_x': torch.randint(16000, (128, 50)).to(self.device), # (B, N_enc)
-            'enc_x_padding_mask': torch.randint(0, 2, (128, 50)).to(self.device), # (B, N_enc)
-            'dec_x': torch.randint(16000, (128, 60)).to(self.device), # (B, N_dec)
-            'dec_x_padding_mask': torch.randint(0, 2, (128, 60)).to(self.device) # (B, N_dec)
-        }
+        # self.example_input_array = {
+        #     'enc_x': torch.randint(16000, (128, 50)).to(self.device), # (B, N_enc)
+        #     'enc_x_padding_mask': torch.randint(0, 2, (128, 50)).to(self.device), # (B, N_enc)
+        #     'dec_x': torch.randint(16000, (128, 60)).to(self.device), # (B, N_dec)
+        #     'dec_x_padding_mask': torch.randint(0, 2, (128, 60)).to(self.device) # (B, N_dec)
+        # }
         self.validation_losses = []
     
     def forward(self, enc_x, dec_x, enc_x_padding_mask=None, dec_x_padding_mask=None):
