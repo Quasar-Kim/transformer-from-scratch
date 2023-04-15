@@ -6,14 +6,14 @@ def create_lookahead_mask(x: torch.Tensor):
     # x: (B, N, d_model)
     assert len(x.shape) == 3
     b, n, _ = x.shape
-    mask = torch.tril(torch.ones(n, n))
-    mask = mask.unsqueeze(0).repeat(b, 1, 1).to(x)
+    mask = torch.tril(torch.ones(n, n, device=x.device))
+    mask = mask.unsqueeze(0).repeat(b, 1, 1)
     return mask
 
 def binary_mask_to_attention_mask(key_binary_mask: torch.Tensor, query_sequence_length: int):
     # binary_mask: (B, N_kv)
     # mask: (B, N_q, N_kv)
-    mask = key_binary_mask.float().unsqueeze(1).repeat(1, query_sequence_length, 1).to(key_binary_mask)
+    mask = key_binary_mask.float().unsqueeze(1).repeat(1, query_sequence_length, 1)
     return mask
 
 class Attention(nn.Module):
@@ -34,12 +34,12 @@ class Attention(nn.Module):
         q = self.q_linear(x_q) # (B, N_q, d_k)
         k = self.k_linear(x_k) # (B, N_kv, d_k)
         v = self.v_linear(x_v) # (B, N_kv, d_k)
-        scaler = torch.sqrt(torch.tensor(self.d_k))
+        scaler = torch.sqrt(torch.tensor(float(self.d_k), device=x_q.device))
         score = (q @ k.transpose(1, 2)) / scaler # (B, N_q, N_kv)
         if mask is not None:
             assert mask.shape == score.shape
             score = self.mask(score, mask) # (B, N_q, N_kv)
-        y = torch.softmax(score, dim=1) @ v # (B, N_q, d_k)
+        y = torch.softmax(score, dim=2) @ v # (B, N_q, d_k)
         return y
     
     def mask(self, score, mask):
@@ -164,19 +164,20 @@ class PositionalEmbedding(nn.Module):
     def forward(self, x):
         # x: (B, N)
         y = self.embedding(x) # y: (B, N, d_embed)
-        b, n = x.shape[0], x.shape[1]
-        encoding = self.positional_encoding(n).unsqueeze(0).repeat(b, 1, 1)
-        y += encoding.to(y)
+        y = self.encode_position(y)
         return y
-    
-    def positional_encoding(self, n):
-        pos = torch.arange(n)# (n,)
-        two_i = 2. * (torch.arange(self.d_embed) // 2.) # (d_embed,), [0., 0., 2., 2., 4., ...]
-        angles = pos[:, None] / torch.pow(10000, (two_i / self.d_embed)) # (n, d_embed)
-        encoding = angles.clone()
-        encoding[:, 0::2] = torch.sin(angles[:, 0::2])
-        encoding[:, 1::2] = torch.cos(angles[:, 1::2])
-        return encoding
+
+    def encode_position(self, y: torch.Tensor):
+        b, n, _ = y.shape
+        pos = torch.arange(n, device=y.device).unsqueeze(1).repeat(1, self.d_embed) # (N, d_embed)
+        two_i = (2. * (torch.arange(self.d_embed, device=y.device) // 2.)).unsqueeze(0).repeat(n, 1) # (N, d_embed)
+        angles = pos / torch.pow(10000., (two_i / self.d_embed)) # (N, d_embed)
+        encoding = torch.empty((n, self.d_embed), device=y.device)
+        indices = torch.tensor([True, False], device=y.device).repeat((self.d_embed // 2) + 1)[:self.d_embed]
+        encoding = torch.where(indices, torch.sin(angles), torch.cos(angles))
+        encoding = encoding.unsqueeze(0).repeat(b, 1, 1)
+        y += encoding
+        return y
     
 class Transformer(nn.Module):
     def __init__(self, vocab_size, d_embed, d_model, num_layers, num_heads, d_ff, dropout_rate=0.):
