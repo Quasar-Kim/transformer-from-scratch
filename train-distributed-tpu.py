@@ -5,6 +5,10 @@ from tokenizer import WordPieceTokenizer
 from data import ChatbotDataModule
 from model import LitTransformer
 
+# tested on TPU VM v3-8 (kaggle)
+# 1 epoch = 13s
+#  -> 64x speedup vs. notebook gpu
+
 if __name__ == '__main__':
     pl.seed_everything(42)
     tokenizer = WordPieceTokenizer()
@@ -26,12 +30,15 @@ if __name__ == '__main__':
         devices=8,
         max_epochs=50,
         check_val_every_n_epoch=5,
-        precision='16-mixed',
+        precision='bf16-mixed',
         callbacks=[
             RichModelSummary(),
             RichProgressBar(),
             ModelCheckpoint(save_top_k=-1, every_n_epochs=5, filename='{epoch}')
         ],
-        logger=WandbLogger(project='transformer_from_scratch', offline=True)
+        # BUG: wandb offline 모드를 사용할 경우 timeout 오류 발생
+        # 패치가 릴리스될때까지는 offline 모드 사용 불가
+        # https://github.com/wandb/wandb/issues/5071
+        logger=WandbLogger(project='transformer_from_scratch', log_model=True)
     )
     trainer.fit(model, dm)
