@@ -39,7 +39,7 @@ class Attention(nn.Module):
         if mask is not None:
             assert mask.shape == score.shape
             score = self.mask(score, mask) # (B, N_q, N_kv)
-        y = torch.softmax(score, dim=1) @ v # (B, N_q, d_k)
+        y = torch.softmax(score, dim=2) @ v # (B, N_q, d_k)
         return y
     
     def mask(self, score, mask):
