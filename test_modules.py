@@ -35,7 +35,7 @@ class TestMultiHeadSelfAttention:
 
 def test_create_lookahead_mask():
     x = torch.Tensor(1, 4, 512)
-    mask = create_lookahead_mask(x.shape)
+    mask = create_lookahead_mask(x)
     correct_mask = torch.tensor([[
         [1., 0., 0., 0.],
         [1., 1., 0., 0.],

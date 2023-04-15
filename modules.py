@@ -2,18 +2,18 @@ import torch
 from torch import nn
 import torch.nn.functional as F
 
-def create_lookahead_mask(x_shape: torch.Size):
+def create_lookahead_mask(x: torch.Tensor):
     # x: (B, N, d_model)
-    assert len(x_shape) == 3
-    b, n = x_shape[0], x_shape[1]
+    assert len(x.shape) == 3
+    b, n, _ = x.shape
     mask = torch.tril(torch.ones(n, n))
-    mask = mask.unsqueeze(0).repeat(b, 1, 1)
+    mask = mask.unsqueeze(0).repeat(b, 1, 1).to(x)
     return mask
 
-def binary_mask_to_attention_mask(key_binary_mask, query_sequence_length):
+def binary_mask_to_attention_mask(key_binary_mask: torch.Tensor, query_sequence_length: int):
     # binary_mask: (B, N_kv)
     # mask: (B, N_q, N_kv)
-    mask = key_binary_mask.float().unsqueeze(1).repeat(1, query_sequence_length, 1)
+    mask = key_binary_mask.float().unsqueeze(1).repeat(1, query_sequence_length, 1).to(key_binary_mask)
     return mask
 
 class Attention(nn.Module):
@@ -137,7 +137,7 @@ class Decoder(Encoder):
         return y
     
     def forward_self_attention(self, x, dec_binary_mask):
-        lookahead_mask = create_lookahead_mask(x.shape)
+        lookahead_mask = create_lookahead_mask(x)
         if dec_binary_mask is not None:
             dec_padding_mask = binary_mask_to_attention_mask(dec_binary_mask, query_sequence_length=x.shape[1]) if dec_binary_mask is not None else None
             mask = torch.maximum(dec_padding_mask, lookahead_mask)
@@ -166,11 +166,11 @@ class PositionalEmbedding(nn.Module):
         y = self.embedding(x) # y: (B, N, d_embed)
         b, n = x.shape[0], x.shape[1]
         encoding = self.positional_encoding(n).unsqueeze(0).repeat(b, 1, 1)
-        y += encoding
+        y += encoding.to(y)
         return y
     
     def positional_encoding(self, n):
-        pos = torch.arange(n) # (n,)
+        pos = torch.arange(n)# (n,)
         two_i = 2. * (torch.arange(self.d_embed) // 2.) # (d_embed,), [0., 0., 2., 2., 4., ...]
         angles = pos[:, None] / torch.pow(10000, (two_i / self.d_embed)) # (n, d_embed)
         encoding = angles.clone()
