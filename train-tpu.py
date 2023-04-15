@@ -9,27 +9,15 @@ from model import LitTransformer
 if __name__ == '__main__':
     pl.seed_everything(42)
     tokenizer = WordPieceTokenizer()
-    dm = ChatbotDataModule(batch_size=32, max_length=64, tokenizer=tokenizer)
-    # model = LitTransformer(
-    #     tokenizer=tokenizer,
-    #     vocab_size=2**14, # 16384
-    #     d_embed=256, # 256
-    #     d_model=256, # 256
-    #     num_layers=2,
-    #     num_heads=8, # 8
-    #     d_ff=512, # 512
-    #     dropout_rate=0.1,
-    #     lr=0.0014,
-    #     num_warmup_steps=4000
-    # )
+    dm = ChatbotDataModule(batch_size=128, max_length=128, tokenizer=tokenizer)
     model = LitTransformer(
         tokenizer=tokenizer,
         vocab_size=2**14, # 16384
-        d_embed=2, # 256
-        d_model=2, # 256
-        num_layers=1,
-        num_heads=2, # 8
-        d_ff=8, # 512
+        d_embed=256, # 256
+        d_model=256, # 256
+        num_layers=2,
+        num_heads=8, # 8
+        d_ff=512, # 512
         dropout_rate=0.1,
         lr=0.0014,
         num_warmup_steps=4000
