@@ -4,6 +4,7 @@ from lightning.pytorch.callbacks import RichModelSummary, RichProgressBar, Model
 from tokenizer import WordPieceTokenizer
 from data import ChatbotDataModule
 from model import LitTransformer
+import os
 
 if __name__ == '__main__':
     pl.seed_everything(42)
@@ -34,4 +35,7 @@ if __name__ == '__main__':
         ],
         logger=WandbLogger(project='transformer_from_scratch', offline=True)
     )
+
+    # lightning is not ready for PJRT Runtime
+    os.environ.pop('PJRT_DEVICE', None)
     trainer.fit(model, dm)
