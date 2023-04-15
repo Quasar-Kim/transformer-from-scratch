@@ -5,7 +5,6 @@ from torch import optim
 import lightning.pytorch as pl
 from transformers import get_inverse_sqrt_schedule
 from modules import Transformer
-# import wandb
 
 class LitTransformer(pl.LightningModule):
     def __init__(self, *, tokenizer, lr, num_warmup_steps, **kwargs):
@@ -19,6 +18,7 @@ class LitTransformer(pl.LightningModule):
         #     'dec_x': torch.randint(16000, (128, 60)).to(self.device), # (B, N_dec)
         #     'dec_x_padding_mask': torch.randint(0, 2, (128, 60)).to(self.device) # (B, N_dec)
         # }
+        self.train_losses = []
         self.validation_losses = []
     
     def forward(self, enc_x, dec_x, enc_x_padding_mask=None, dec_x_padding_mask=None):
@@ -28,12 +28,14 @@ class LitTransformer(pl.LightningModule):
         y_true = batch.pop('y')
         y_pred = self(**batch)
         loss = self.loss(y_pred, y_true)
+        self.train_losses.append(loss)
         return {'loss': loss}
     
     def validation_step(self, batch, batch_idx):
         y_true = batch.pop('y')
         y_pred = self(**batch)
         loss = self.loss(y_pred, y_true)
+        self.validation_losses.append(loss)
         return {'loss': loss}
     
     @contextmanager
@@ -79,37 +81,19 @@ class LitTransformer(pl.LightningModule):
         lr_scheduler = get_inverse_sqrt_schedule(optimizer, num_warmup_steps=self.hparams.num_warmup_steps)
         return { 'optimizer': optimizer, 'lr_scheduler': lr_scheduler }
     
-    # def _log(self, key, value, epoch=False):
-    #     if (self.global_step % self.trainer.log_every_n_steps != 0) and not epoch:
-    #         return
-    #     wandb.log({
-    #         'step': self.global_step,
-    #         key: value
-    #     })
-    
-    # def on_train_batch_end(self, outputs, batch, batch_idx):
-    #     loss = outputs['loss']
-    #     # ipu에서는 outputs이 reduce가 안 되서 나옴
-    #     if loss.dim() > 0:
-    #         loss = loss.mean()
-    #     self._log('train_loss', loss)
-        
-    # def on_validation_batch_end(self, outputs, batch, batch_idx):
-    #     loss = outputs['loss']
-    #     # ipu에서는 outputs이 reduce가 안 되서 나옴
-    #     if loss.dim() > 0:
-    #         loss = loss.mean()
-    #     self.validation_losses.append(loss)
+    def on_train_batch_end(self, outputs, batch, batch_idx):
+        pass
 
-    # def on_validation_end(self, *args):
-    #     if self.global_step == 0:
-    #         # ignore sanity check
-    #         return
-    #     if len(self.validation_losses) == 0:
-    #         return
-    #     epoch_mean = torch.stack(self.validation_losses).mean()
-    #     self._log('val_loss', epoch_mean, epoch=True)
-    #     self.validation_losses.clear()
+    def on_train_epoch_end(self, *args):
+        loss = torch.stack(self.train_losses).mean()
+        self.train_losses.clear()
+        # loss -> mean of local losses
+        # sync_dist=True -> will reduce metrics across processes (as specified by reduce_fx, which is by default torch.mean())
+        self.log('train_loss', loss, on_epoch=True, sync_dist=True, prog_bar=True)
 
+    def on_validation_epoch_end(self, *args):
+        loss = torch.stack(self.validation_losses).mean()
+        self.validation_losses.clear()
+        self.log('val_loss', loss, on_epoch=True, sync_dist=True)
 
     

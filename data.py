@@ -50,13 +50,14 @@ class ChatbotDataset:
         }
 
 class ChatbotDataModule(pl.LightningDataModule):
-    def __init__(self, batch_size, tokenizer, max_length=128, data_dir='./chatbot_dataset', num_workers=None):
+    def __init__(self, batch_size, tokenizer, max_length=128, data_dir='./chatbot_dataset'):
         super().__init__()
         self.batch_size = batch_size
         self.tokenizer = tokenizer
         self.data_dir = data_dir
         self.max_length = max_length
-        self.num_workers = os.cpu_count() if num_workers is None else num_workers
+        # 데이터를 모두 메모리로 미리 올리기 때문에 num_workers를 쓰면 오히려 overhead 때문에 더 느려짐
+        # self.num_workers = os.cpu_count() if num_workers is None else num_workers
         self.pin_memory = torch.cuda.is_available()
 
     def prepare_data(self):
