@@ -5,7 +5,7 @@ from torch import optim
 import lightning.pytorch as pl
 from transformers import get_inverse_sqrt_schedule
 from modules import Transformer
-import wandb
+# import wandb
 
 class LitTransformer(pl.LightningModule):
     def __init__(self, *, tokenizer, lr, num_warmup_steps, **kwargs):

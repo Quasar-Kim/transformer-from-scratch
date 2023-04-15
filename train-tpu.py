@@ -1,10 +1,10 @@
 import lightning.pytorch as pl
-from lightning.pytorch.loggers import WandbLogger
+# from lightning.pytorch.loggers import WandbLogger
 from lightning.pytorch.callbacks import RichModelSummary, RichProgressBar, ModelCheckpoint
 from tokenizer import WordPieceTokenizer
 from data import ChatbotDataModule
 from model import LitTransformer
-import wandb
+# import wandb
 
 if __name__ == '__main__':
     pl.seed_everything(42)

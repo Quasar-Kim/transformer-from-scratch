@@ -1,5 +1,5 @@
 import torch
-from torch.utils.data import DataLoader, default_collate
+from torch.utils.data import DataLoader
 import lightning.pytorch as pl
 import requests
 import os
