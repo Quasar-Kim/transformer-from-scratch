@@ -1,6 +1,6 @@
 import lightning.pytorch as pl
 from lightning.pytorch.loggers import WandbLogger
-from lightning.pytorch.callbacks import RichModelSummary, ModelCheckpoint
+from lightning.pytorch.callbacks import RichModelSummary, ModelCheckpoint, LearningRateMonitor
 from tokenizer import WordPieceTokenizer
 from data import ChatbotDataModule
 from model import LitTransformer
@@ -31,6 +31,7 @@ if __name__ == '__main__':
             # BUG: RichProgressbar breaks in kaggle
             RichModelSummary(),
             ModelCheckpoint(save_top_k=3, every_n_epochs=5, filename='{epoch}-{val_loss:.2f}', monitor='val_loss'),
+            LearningRateMonitor(logging_interval='epoch')
         ],
         # BUG: wandb offline 모드를 사용할 경우 timeout 오류 발생
         # 패치가 릴리스될때까지는 offline 모드 사용 불가
