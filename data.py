@@ -2,7 +2,6 @@ import torch
 from torch.utils.data import DataLoader
 import lightning.pytorch as pl
 import requests
-import os
 from pathlib import Path
 import pandas
 
@@ -72,8 +71,12 @@ class ChatbotDataModule(pl.LightningDataModule):
         dataset = ChatbotDataset(root=self.data_dir, split=split, download=False)
         tokenized_samples = []
         for sample in dataset:
-            enc_input = self.tokenizer(sample['question'], padding='max_length', max_length=self.max_length)
-            dec_input = self.tokenizer(self.tokenizer.bos_token + sample['answer'], padding='max_length', max_length=self.max_length)
+            # 예시:
+            # enc_x (질문): [BOS] 고양이 만져도 되? [EOS]
+            # dec_x (답변): [BOS] 얼마든지요. [EOS]
+            # y:            얼마든지요. [EOS] [PAD]
+            enc_input = self.tokenizer(self.tokenizer.bos_token + sample['question'] + self.tokenizer.eos_token, padding='max_length', max_length=self.max_length)
+            dec_input = self.tokenizer(self.tokenizer.bos_token + sample['answer'] + self.tokenizer.eos_token, padding='max_length', max_length=self.max_length)
             dec_output = self.tokenizer.encode(sample['answer'] + self.tokenizer.eos_token, padding='max_length', max_length=self.max_length)
             tokenized_samples.append({
                 'enc_x': torch.tensor(enc_input['input_ids']),

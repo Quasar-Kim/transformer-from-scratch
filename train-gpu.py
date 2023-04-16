@@ -9,7 +9,7 @@ import wandb
 if __name__ == '__main__':
     pl.seed_everything(42)
     tokenizer = WordPieceTokenizer()
-    dm = ChatbotDataModule(batch_size=64, max_length=64, is_gpu=True, tokenizer=tokenizer)
+    dm = ChatbotDataModule(batch_size=32, max_length=64, is_gpu=True, tokenizer=tokenizer)
     model = LitTransformer(
         tokenizer=tokenizer,
         vocab_size=2**14, # 16384
@@ -31,7 +31,7 @@ if __name__ == '__main__':
             RichModelSummary(), 
             ModelCheckpoint(save_top_k=-1, every_n_epochs=5, filename='{epoch}')
         ],
-        logger=WandbLogger(project='transformer_from_scratch', offline=True)
+        logger=WandbLogger(project='transformer_from_scratch')
     )
     trainer.fit(model, dm)
 
