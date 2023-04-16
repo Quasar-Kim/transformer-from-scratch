@@ -18,7 +18,7 @@ if __name__ == '__main__':
         num_heads=8,
         d_ff=512,
         dropout_rate=0.1,
-        lr=0.0014,
+        lr=1e-5,
         num_warmup_steps=100
     )
     trainer = pl.Trainer(
