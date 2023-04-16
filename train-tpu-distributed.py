@@ -19,7 +19,7 @@ if __name__ == '__main__':
         d_ff=512,
         dropout_rate=0.1,
         lr=0.0014,
-        num_warmup_steps=4000
+        num_warmup_steps=500
     )
     trainer = pl.Trainer(
         accelerator='tpu',
