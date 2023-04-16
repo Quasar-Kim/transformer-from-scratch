@@ -19,12 +19,12 @@ if __name__ == '__main__':
         d_ff=512,
         dropout_rate=0.1,
         lr=0.0014,
-        num_warmup_steps=500
+        num_warmup_steps=100
     )
     trainer = pl.Trainer(
         accelerator='tpu',
         devices=8,
-        max_epochs=300,
+        max_epochs=150,
         check_val_every_n_epoch=5,
         precision='bf16-mixed',
         callbacks=[
