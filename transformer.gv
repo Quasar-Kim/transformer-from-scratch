@@ -1,5 +1,5 @@
 strict digraph transformer {
-	graph [ordering=in rankdir=TB size="55.199999999999996,55.199999999999996"]
+	graph [ordering=in rankdir=TB size="57.0,57.0"]
 	node [align=left fontname="Linux libertine" fontsize=10 height=0.2 margin=0 ranksep=0.1 shape=plaintext style=filled]
 	edge [fontsize=10]
 	0 [label=<
@@ -31,6 +31,32 @@ strict digraph transformer {
                     <TABLE BORDER="0" CELLBORDER="1"
                     CELLSPACING="0" CELLPADDING="4">
                     <TR>
+                        <TD ROWSPAN="2">unsqueeze<BR/>depth:2</TD>
+                        <TD COLSPAN="2">input:</TD>
+                        <TD COLSPAN="2">(4,) </TD>
+                    </TR>
+                    <TR>
+                        <TD COLSPAN="2">output: </TD>
+                        <TD COLSPAN="2">(4, 1) </TD>
+                    </TR>
+                    </TABLE>> fillcolor=aliceblue]
+		4 [label=<
+                    <TABLE BORDER="0" CELLBORDER="1"
+                    CELLSPACING="0" CELLPADDING="4">
+                    <TR>
+                        <TD ROWSPAN="2">repeat<BR/>depth:2</TD>
+                        <TD COLSPAN="2">input:</TD>
+                        <TD COLSPAN="2">(4, 1) </TD>
+                    </TR>
+                    <TR>
+                        <TD COLSPAN="2">output: </TD>
+                        <TD COLSPAN="2">(4, 6) </TD>
+                    </TR>
+                    </TABLE>> fillcolor=aliceblue]
+		5 [label=<
+                    <TABLE BORDER="0" CELLBORDER="1"
+                    CELLSPACING="0" CELLPADDING="4">
+                    <TR>
                         <TD ROWSPAN="2">__floordiv__<BR/>depth:2</TD>
                         <TD COLSPAN="2">input:</TD>
                         <TD COLSPAN="2">(6,) </TD>
@@ -40,7 +66,7 @@ strict digraph transformer {
                         <TD COLSPAN="2">(6,) </TD>
                     </TR>
                     </TABLE>> fillcolor=aliceblue]
-		4 [label=<
+		6 [label=<
                     <TABLE BORDER="0" CELLBORDER="1"
                     CELLSPACING="0" CELLPADDING="4">
                     <TR>
@@ -53,52 +79,26 @@ strict digraph transformer {
                         <TD COLSPAN="2">(6,) </TD>
                     </TR>
                     </TABLE>> fillcolor=aliceblue]
-		5 [label=<
-                    <TABLE BORDER="0" CELLBORDER="1"
-                    CELLSPACING="0" CELLPADDING="4">
-                    <TR>
-                        <TD ROWSPAN="2">__getitem__<BR/>depth:2</TD>
-                        <TD COLSPAN="2">input:</TD>
-                        <TD COLSPAN="2">(4,) </TD>
-                    </TR>
-                    <TR>
-                        <TD COLSPAN="2">output: </TD>
-                        <TD COLSPAN="2">(4, 1) </TD>
-                    </TR>
-                    </TABLE>> fillcolor=aliceblue]
-		6 [label=<
-                    <TABLE BORDER="0" CELLBORDER="1"
-                    CELLSPACING="0" CELLPADDING="4">
-                    <TR>
-                        <TD ROWSPAN="2">div<BR/>depth:2</TD>
-                        <TD COLSPAN="2">input:</TD>
-                        <TD COLSPAN="2">(6,) </TD>
-                    </TR>
-                    <TR>
-                        <TD COLSPAN="2">output: </TD>
-                        <TD COLSPAN="2">(6,) </TD>
-                    </TR>
-                    </TABLE>> fillcolor=aliceblue]
 		7 [label=<
                     <TABLE BORDER="0" CELLBORDER="1"
                     CELLSPACING="0" CELLPADDING="4">
                     <TR>
-                        <TD ROWSPAN="2">pow<BR/>depth:2</TD>
+                        <TD ROWSPAN="2">unsqueeze<BR/>depth:2</TD>
                         <TD COLSPAN="2">input:</TD>
                         <TD COLSPAN="2">(6,) </TD>
                     </TR>
                     <TR>
                         <TD COLSPAN="2">output: </TD>
-                        <TD COLSPAN="2">(6,) </TD>
+                        <TD COLSPAN="2">(1, 6) </TD>
                     </TR>
                     </TABLE>> fillcolor=aliceblue]
 		8 [label=<
                     <TABLE BORDER="0" CELLBORDER="1"
                     CELLSPACING="0" CELLPADDING="4">
                     <TR>
-                        <TD ROWSPAN="2">div<BR/>depth:2</TD>
+                        <TD ROWSPAN="2">repeat<BR/>depth:2</TD>
                         <TD COLSPAN="2">input:</TD>
-                        <TD COLSPAN="2">(4, 1), (6,) </TD>
+                        <TD COLSPAN="2">(1, 6) </TD>
                     </TR>
                     <TR>
                         <TD COLSPAN="2">output: </TD>
@@ -109,7 +109,7 @@ strict digraph transformer {
                     <TABLE BORDER="0" CELLBORDER="1"
                     CELLSPACING="0" CELLPADDING="4">
                     <TR>
-                        <TD ROWSPAN="2">clone<BR/>depth:2</TD>
+                        <TD ROWSPAN="2">div<BR/>depth:2</TD>
                         <TD COLSPAN="2">input:</TD>
                         <TD COLSPAN="2">(4, 6) </TD>
                     </TR>
@@ -122,39 +122,39 @@ strict digraph transformer {
                     <TABLE BORDER="0" CELLBORDER="1"
                     CELLSPACING="0" CELLPADDING="4">
                     <TR>
-                        <TD ROWSPAN="2">__getitem__<BR/>depth:2</TD>
+                        <TD ROWSPAN="2">pow<BR/>depth:2</TD>
                         <TD COLSPAN="2">input:</TD>
                         <TD COLSPAN="2">(4, 6) </TD>
                     </TR>
                     <TR>
                         <TD COLSPAN="2">output: </TD>
-                        <TD COLSPAN="2">(4, 3) </TD>
+                        <TD COLSPAN="2">(4, 6) </TD>
                     </TR>
                     </TABLE>> fillcolor=aliceblue]
 		11 [label=<
                     <TABLE BORDER="0" CELLBORDER="1"
                     CELLSPACING="0" CELLPADDING="4">
                     <TR>
-                        <TD ROWSPAN="2">sin<BR/>depth:2</TD>
+                        <TD ROWSPAN="2">div<BR/>depth:2</TD>
                         <TD COLSPAN="2">input:</TD>
-                        <TD COLSPAN="2">(4, 3) </TD>
+                        <TD COLSPAN="2">2 x (4, 6) </TD>
                     </TR>
                     <TR>
                         <TD COLSPAN="2">output: </TD>
-                        <TD COLSPAN="2">(4, 3) </TD>
+                        <TD COLSPAN="2">(4, 6) </TD>
                     </TR>
                     </TABLE>> fillcolor=aliceblue]
 		12 [label=<
                     <TABLE BORDER="0" CELLBORDER="1"
                     CELLSPACING="0" CELLPADDING="4">
                     <TR>
-                        <TD ROWSPAN="2">__getitem__<BR/>depth:2</TD>
+                        <TD ROWSPAN="2">sin<BR/>depth:2</TD>
                         <TD COLSPAN="2">input:</TD>
                         <TD COLSPAN="2">(4, 6) </TD>
                     </TR>
                     <TR>
                         <TD COLSPAN="2">output: </TD>
-                        <TD COLSPAN="2">(4, 3) </TD>
+                        <TD COLSPAN="2">(4, 6) </TD>
                     </TR>
                     </TABLE>> fillcolor=aliceblue]
 		13 [label=<
@@ -163,14 +163,27 @@ strict digraph transformer {
                     <TR>
                         <TD ROWSPAN="2">cos<BR/>depth:2</TD>
                         <TD COLSPAN="2">input:</TD>
-                        <TD COLSPAN="2">(4, 3) </TD>
+                        <TD COLSPAN="2">(4, 6) </TD>
                     </TR>
                     <TR>
                         <TD COLSPAN="2">output: </TD>
-                        <TD COLSPAN="2">(4, 3) </TD>
+                        <TD COLSPAN="2">(4, 6) </TD>
                     </TR>
                     </TABLE>> fillcolor=aliceblue]
 		14 [label=<
+                    <TABLE BORDER="0" CELLBORDER="1"
+                    CELLSPACING="0" CELLPADDING="4">
+                    <TR>
+                        <TD ROWSPAN="2">where<BR/>depth:2</TD>
+                        <TD COLSPAN="2">input:</TD>
+                        <TD COLSPAN="2">2 x (4, 6) </TD>
+                    </TR>
+                    <TR>
+                        <TD COLSPAN="2">output: </TD>
+                        <TD COLSPAN="2">(4, 6) </TD>
+                    </TR>
+                    </TABLE>> fillcolor=aliceblue]
+		15 [label=<
                     <TABLE BORDER="0" CELLBORDER="1"
                     CELLSPACING="0" CELLPADDING="4">
                     <TR>
@@ -183,7 +196,7 @@ strict digraph transformer {
                         <TD COLSPAN="2">(1, 4, 6) </TD>
                     </TR>
                     </TABLE>> fillcolor=aliceblue]
-		15 [label=<
+		16 [label=<
                     <TABLE BORDER="0" CELLBORDER="1"
                     CELLSPACING="0" CELLPADDING="4">
                     <TR>
@@ -196,7 +209,7 @@ strict digraph transformer {
                         <TD COLSPAN="2">(1, 4, 6) </TD>
                     </TR>
                     </TABLE>> fillcolor=aliceblue]
-		16 [label=<
+		17 [label=<
                     <TABLE BORDER="0" CELLBORDER="1"
                     CELLSPACING="0" CELLPADDING="4">
                     <TR>
@@ -210,7 +223,7 @@ strict digraph transformer {
                     </TR>
                     </TABLE>> fillcolor=aliceblue]
 	}
-	17 [label=<
+	18 [label=<
                     <TABLE BORDER="0" CELLBORDER="1"
                     CELLSPACING="0" CELLPADDING="4">
                     <TR>
@@ -223,7 +236,7 @@ strict digraph transformer {
                         <TD COLSPAN="2">(1, 4, 6) </TD>
                     </TR>
                     </TABLE>> fillcolor=darkseagreen1]
-	18 [label=<
+	19 [label=<
                     <TABLE BORDER="0" CELLBORDER="1"
                     CELLSPACING="0" CELLPADDING="4">
                     <TR>
@@ -240,19 +253,6 @@ strict digraph transformer {
 		fontsize=12 label=Encoder labeljust=l style=dashed
 		subgraph cluster_4 {
 			fontsize=12 label=MultiHeadSelfAttention labeljust=l style=dashed
-			19 [label=<
-                    <TABLE BORDER="0" CELLBORDER="1"
-                    CELLSPACING="0" CELLPADDING="4">
-                    <TR>
-                        <TD ROWSPAN="2">Attention<BR/>depth:3</TD>
-                        <TD COLSPAN="2">input:</TD>
-                        <TD COLSPAN="2">3 x (1, 4, 6) </TD>
-                    </TR>
-                    <TR>
-                        <TD COLSPAN="2">output: </TD>
-                        <TD COLSPAN="2">(1, 4, 3) </TD>
-                    </TR>
-                    </TABLE>> fillcolor=darkseagreen1]
 			20 [label=<
                     <TABLE BORDER="0" CELLBORDER="1"
                     CELLSPACING="0" CELLPADDING="4">
@@ -270,6 +270,19 @@ strict digraph transformer {
                     <TABLE BORDER="0" CELLBORDER="1"
                     CELLSPACING="0" CELLPADDING="4">
                     <TR>
+                        <TD ROWSPAN="2">Attention<BR/>depth:3</TD>
+                        <TD COLSPAN="2">input:</TD>
+                        <TD COLSPAN="2">3 x (1, 4, 6) </TD>
+                    </TR>
+                    <TR>
+                        <TD COLSPAN="2">output: </TD>
+                        <TD COLSPAN="2">(1, 4, 3) </TD>
+                    </TR>
+                    </TABLE>> fillcolor=darkseagreen1]
+			22 [label=<
+                    <TABLE BORDER="0" CELLBORDER="1"
+                    CELLSPACING="0" CELLPADDING="4">
+                    <TR>
                         <TD ROWSPAN="2">cat<BR/>depth:3</TD>
                         <TD COLSPAN="2">input:</TD>
                         <TD COLSPAN="2">2 x (1, 4, 3) </TD>
@@ -279,7 +292,7 @@ strict digraph transformer {
                         <TD COLSPAN="2">(1, 4, 6) </TD>
                     </TR>
                     </TABLE>> fillcolor=aliceblue]
-			22 [label=<
+			23 [label=<
                     <TABLE BORDER="0" CELLBORDER="1"
                     CELLSPACING="0" CELLPADDING="4">
                     <TR>
@@ -293,7 +306,7 @@ strict digraph transformer {
                     </TR>
                     </TABLE>> fillcolor=darkseagreen1]
 		}
-		23 [label=<
+		24 [label=<
                     <TABLE BORDER="0" CELLBORDER="1"
                     CELLSPACING="0" CELLPADDING="4">
                     <TR>
@@ -306,7 +319,7 @@ strict digraph transformer {
                         <TD COLSPAN="2">(1, 4, 6) </TD>
                     </TR>
                     </TABLE>> fillcolor=darkseagreen1]
-		24 [label=<
+		25 [label=<
                     <TABLE BORDER="0" CELLBORDER="1"
                     CELLSPACING="0" CELLPADDING="4">
                     <TR>
@@ -319,7 +332,7 @@ strict digraph transformer {
                         <TD COLSPAN="2">(1, 4, 6) </TD>
                     </TR>
                     </TABLE>> fillcolor=aliceblue]
-		25 [label=<
+		26 [label=<
                     <TABLE BORDER="0" CELLBORDER="1"
                     CELLSPACING="0" CELLPADDING="4">
                     <TR>
@@ -334,7 +347,7 @@ strict digraph transformer {
                     </TABLE>> fillcolor=darkseagreen1]
 		subgraph cluster_5 {
 			fontsize=12 label=FFNN labeljust=l style=dashed
-			26 [label=<
+			27 [label=<
                     <TABLE BORDER="0" CELLBORDER="1"
                     CELLSPACING="0" CELLPADDING="4">
                     <TR>
@@ -347,7 +360,7 @@ strict digraph transformer {
                         <TD COLSPAN="2">(1, 4, 16) </TD>
                     </TR>
                     </TABLE>> fillcolor=darkseagreen1]
-			27 [label=<
+			28 [label=<
                     <TABLE BORDER="0" CELLBORDER="1"
                     CELLSPACING="0" CELLPADDING="4">
                     <TR>
@@ -360,7 +373,7 @@ strict digraph transformer {
                         <TD COLSPAN="2">(1, 4, 16) </TD>
                     </TR>
                     </TABLE>> fillcolor=aliceblue]
-			28 [label=<
+			29 [label=<
                     <TABLE BORDER="0" CELLBORDER="1"
                     CELLSPACING="0" CELLPADDING="4">
                     <TR>
@@ -374,7 +387,7 @@ strict digraph transformer {
                     </TR>
                     </TABLE>> fillcolor=darkseagreen1]
 		}
-		29 [label=<
+		30 [label=<
                     <TABLE BORDER="0" CELLBORDER="1"
                     CELLSPACING="0" CELLPADDING="4">
                     <TR>
@@ -387,7 +400,7 @@ strict digraph transformer {
                         <TD COLSPAN="2">(1, 4, 6) </TD>
                     </TR>
                     </TABLE>> fillcolor=darkseagreen1]
-		30 [label=<
+		31 [label=<
                     <TABLE BORDER="0" CELLBORDER="1"
                     CELLSPACING="0" CELLPADDING="4">
                     <TR>
@@ -400,7 +413,7 @@ strict digraph transformer {
                         <TD COLSPAN="2">(1, 4, 6) </TD>
                     </TR>
                     </TABLE>> fillcolor=aliceblue]
-		31 [label=<
+		32 [label=<
                     <TABLE BORDER="0" CELLBORDER="1"
                     CELLSPACING="0" CELLPADDING="4">
                     <TR>
@@ -416,7 +429,7 @@ strict digraph transformer {
 	}
 	subgraph cluster_6 {
 		fontsize=12 label=PositionalEmbedding labeljust=l style=dashed
-		32 [label=<
+		33 [label=<
                     <TABLE BORDER="0" CELLBORDER="1"
                     CELLSPACING="0" CELLPADDING="4">
                     <TR>
@@ -429,7 +442,33 @@ strict digraph transformer {
                         <TD COLSPAN="2">(1, 8, 6) </TD>
                     </TR>
                     </TABLE>> fillcolor=darkseagreen1]
-		33 [label=<
+		34 [label=<
+                    <TABLE BORDER="0" CELLBORDER="1"
+                    CELLSPACING="0" CELLPADDING="4">
+                    <TR>
+                        <TD ROWSPAN="2">unsqueeze<BR/>depth:2</TD>
+                        <TD COLSPAN="2">input:</TD>
+                        <TD COLSPAN="2">(8,) </TD>
+                    </TR>
+                    <TR>
+                        <TD COLSPAN="2">output: </TD>
+                        <TD COLSPAN="2">(8, 1) </TD>
+                    </TR>
+                    </TABLE>> fillcolor=aliceblue]
+		35 [label=<
+                    <TABLE BORDER="0" CELLBORDER="1"
+                    CELLSPACING="0" CELLPADDING="4">
+                    <TR>
+                        <TD ROWSPAN="2">repeat<BR/>depth:2</TD>
+                        <TD COLSPAN="2">input:</TD>
+                        <TD COLSPAN="2">(8, 1) </TD>
+                    </TR>
+                    <TR>
+                        <TD COLSPAN="2">output: </TD>
+                        <TD COLSPAN="2">(8, 6) </TD>
+                    </TR>
+                    </TABLE>> fillcolor=aliceblue]
+		36 [label=<
                     <TABLE BORDER="0" CELLBORDER="1"
                     CELLSPACING="0" CELLPADDING="4">
                     <TR>
@@ -442,7 +481,7 @@ strict digraph transformer {
                         <TD COLSPAN="2">(6,) </TD>
                     </TR>
                     </TABLE>> fillcolor=aliceblue]
-		34 [label=<
+		37 [label=<
                     <TABLE BORDER="0" CELLBORDER="1"
                     CELLSPACING="0" CELLPADDING="4">
                     <TR>
@@ -455,65 +494,26 @@ strict digraph transformer {
                         <TD COLSPAN="2">(6,) </TD>
                     </TR>
                     </TABLE>> fillcolor=aliceblue]
-		35 [label=<
-                    <TABLE BORDER="0" CELLBORDER="1"
-                    CELLSPACING="0" CELLPADDING="4">
-                    <TR>
-                        <TD ROWSPAN="2">__getitem__<BR/>depth:2</TD>
-                        <TD COLSPAN="2">input:</TD>
-                        <TD COLSPAN="2">(8,) </TD>
-                    </TR>
-                    <TR>
-                        <TD COLSPAN="2">output: </TD>
-                        <TD COLSPAN="2">(8, 1) </TD>
-                    </TR>
-                    </TABLE>> fillcolor=aliceblue]
-		36 [label=<
-                    <TABLE BORDER="0" CELLBORDER="1"
-                    CELLSPACING="0" CELLPADDING="4">
-                    <TR>
-                        <TD ROWSPAN="2">div<BR/>depth:2</TD>
-                        <TD COLSPAN="2">input:</TD>
-                        <TD COLSPAN="2">(6,) </TD>
-                    </TR>
-                    <TR>
-                        <TD COLSPAN="2">output: </TD>
-                        <TD COLSPAN="2">(6,) </TD>
-                    </TR>
-                    </TABLE>> fillcolor=aliceblue]
-		37 [label=<
-                    <TABLE BORDER="0" CELLBORDER="1"
-                    CELLSPACING="0" CELLPADDING="4">
-                    <TR>
-                        <TD ROWSPAN="2">pow<BR/>depth:2</TD>
-                        <TD COLSPAN="2">input:</TD>
-                        <TD COLSPAN="2">(6,) </TD>
-                    </TR>
-                    <TR>
-                        <TD COLSPAN="2">output: </TD>
-                        <TD COLSPAN="2">(6,) </TD>
-                    </TR>
-                    </TABLE>> fillcolor=aliceblue]
 		38 [label=<
                     <TABLE BORDER="0" CELLBORDER="1"
                     CELLSPACING="0" CELLPADDING="4">
                     <TR>
-                        <TD ROWSPAN="2">div<BR/>depth:2</TD>
+                        <TD ROWSPAN="2">unsqueeze<BR/>depth:2</TD>
                         <TD COLSPAN="2">input:</TD>
-                        <TD COLSPAN="2">(8, 1), (6,) </TD>
+                        <TD COLSPAN="2">(6,) </TD>
                     </TR>
                     <TR>
                         <TD COLSPAN="2">output: </TD>
-                        <TD COLSPAN="2">(8, 6) </TD>
+                        <TD COLSPAN="2">(1, 6) </TD>
                     </TR>
                     </TABLE>> fillcolor=aliceblue]
 		39 [label=<
                     <TABLE BORDER="0" CELLBORDER="1"
                     CELLSPACING="0" CELLPADDING="4">
                     <TR>
-                        <TD ROWSPAN="2">clone<BR/>depth:2</TD>
+                        <TD ROWSPAN="2">repeat<BR/>depth:2</TD>
                         <TD COLSPAN="2">input:</TD>
-                        <TD COLSPAN="2">(8, 6) </TD>
+                        <TD COLSPAN="2">(1, 6) </TD>
                     </TR>
                     <TR>
                         <TD COLSPAN="2">output: </TD>
@@ -524,55 +524,81 @@ strict digraph transformer {
                     <TABLE BORDER="0" CELLBORDER="1"
                     CELLSPACING="0" CELLPADDING="4">
                     <TR>
-                        <TD ROWSPAN="2">__getitem__<BR/>depth:2</TD>
+                        <TD ROWSPAN="2">div<BR/>depth:2</TD>
                         <TD COLSPAN="2">input:</TD>
                         <TD COLSPAN="2">(8, 6) </TD>
                     </TR>
                     <TR>
                         <TD COLSPAN="2">output: </TD>
-                        <TD COLSPAN="2">(8, 3) </TD>
+                        <TD COLSPAN="2">(8, 6) </TD>
                     </TR>
                     </TABLE>> fillcolor=aliceblue]
 		41 [label=<
                     <TABLE BORDER="0" CELLBORDER="1"
                     CELLSPACING="0" CELLPADDING="4">
                     <TR>
-                        <TD ROWSPAN="2">sin<BR/>depth:2</TD>
+                        <TD ROWSPAN="2">pow<BR/>depth:2</TD>
                         <TD COLSPAN="2">input:</TD>
-                        <TD COLSPAN="2">(8, 3) </TD>
+                        <TD COLSPAN="2">(8, 6) </TD>
                     </TR>
                     <TR>
                         <TD COLSPAN="2">output: </TD>
-                        <TD COLSPAN="2">(8, 3) </TD>
+                        <TD COLSPAN="2">(8, 6) </TD>
                     </TR>
                     </TABLE>> fillcolor=aliceblue]
 		42 [label=<
                     <TABLE BORDER="0" CELLBORDER="1"
                     CELLSPACING="0" CELLPADDING="4">
                     <TR>
-                        <TD ROWSPAN="2">__getitem__<BR/>depth:2</TD>
+                        <TD ROWSPAN="2">div<BR/>depth:2</TD>
                         <TD COLSPAN="2">input:</TD>
-                        <TD COLSPAN="2">(8, 6) </TD>
+                        <TD COLSPAN="2">2 x (8, 6) </TD>
                     </TR>
                     <TR>
                         <TD COLSPAN="2">output: </TD>
-                        <TD COLSPAN="2">(8, 3) </TD>
+                        <TD COLSPAN="2">(8, 6) </TD>
                     </TR>
                     </TABLE>> fillcolor=aliceblue]
 		43 [label=<
                     <TABLE BORDER="0" CELLBORDER="1"
                     CELLSPACING="0" CELLPADDING="4">
                     <TR>
-                        <TD ROWSPAN="2">cos<BR/>depth:2</TD>
+                        <TD ROWSPAN="2">sin<BR/>depth:2</TD>
                         <TD COLSPAN="2">input:</TD>
-                        <TD COLSPAN="2">(8, 3) </TD>
+                        <TD COLSPAN="2">(8, 6) </TD>
                     </TR>
                     <TR>
                         <TD COLSPAN="2">output: </TD>
-                        <TD COLSPAN="2">(8, 3) </TD>
+                        <TD COLSPAN="2">(8, 6) </TD>
                     </TR>
                     </TABLE>> fillcolor=aliceblue]
 		44 [label=<
+                    <TABLE BORDER="0" CELLBORDER="1"
+                    CELLSPACING="0" CELLPADDING="4">
+                    <TR>
+                        <TD ROWSPAN="2">cos<BR/>depth:2</TD>
+                        <TD COLSPAN="2">input:</TD>
+                        <TD COLSPAN="2">(8, 6) </TD>
+                    </TR>
+                    <TR>
+                        <TD COLSPAN="2">output: </TD>
+                        <TD COLSPAN="2">(8, 6) </TD>
+                    </TR>
+                    </TABLE>> fillcolor=aliceblue]
+		45 [label=<
+                    <TABLE BORDER="0" CELLBORDER="1"
+                    CELLSPACING="0" CELLPADDING="4">
+                    <TR>
+                        <TD ROWSPAN="2">where<BR/>depth:2</TD>
+                        <TD COLSPAN="2">input:</TD>
+                        <TD COLSPAN="2">2 x (8, 6) </TD>
+                    </TR>
+                    <TR>
+                        <TD COLSPAN="2">output: </TD>
+                        <TD COLSPAN="2">(8, 6) </TD>
+                    </TR>
+                    </TABLE>> fillcolor=aliceblue]
+		46 [label=<
                     <TABLE BORDER="0" CELLBORDER="1"
                     CELLSPACING="0" CELLPADDING="4">
                     <TR>
@@ -585,7 +611,7 @@ strict digraph transformer {
                         <TD COLSPAN="2">(1, 8, 6) </TD>
                     </TR>
                     </TABLE>> fillcolor=aliceblue]
-		45 [label=<
+		47 [label=<
                     <TABLE BORDER="0" CELLBORDER="1"
                     CELLSPACING="0" CELLPADDING="4">
                     <TR>
@@ -598,7 +624,7 @@ strict digraph transformer {
                         <TD COLSPAN="2">(1, 8, 6) </TD>
                     </TR>
                     </TABLE>> fillcolor=aliceblue]
-		46 [label=<
+		48 [label=<
                     <TABLE BORDER="0" CELLBORDER="1"
                     CELLSPACING="0" CELLPADDING="4">
                     <TR>
@@ -612,7 +638,7 @@ strict digraph transformer {
                     </TR>
                     </TABLE>> fillcolor=aliceblue]
 	}
-	47 [label=<
+	49 [label=<
                     <TABLE BORDER="0" CELLBORDER="1"
                     CELLSPACING="0" CELLPADDING="4">
                     <TR>
@@ -625,7 +651,7 @@ strict digraph transformer {
                         <TD COLSPAN="2">(1, 8, 6) </TD>
                     </TR>
                     </TABLE>> fillcolor=darkseagreen1]
-	48 [label=<
+	50 [label=<
                     <TABLE BORDER="0" CELLBORDER="1"
                     CELLSPACING="0" CELLPADDING="4">
                     <TR>
@@ -640,7 +666,7 @@ strict digraph transformer {
                     </TABLE>> fillcolor=darkseagreen1]
 	subgraph cluster_7 {
 		fontsize=12 label=Decoder labeljust=l style=dashed
-		49 [label=<
+		51 [label=<
                     <TABLE BORDER="0" CELLBORDER="1"
                     CELLSPACING="0" CELLPADDING="4">
                     <TR>
@@ -653,7 +679,7 @@ strict digraph transformer {
                         <TD COLSPAN="2">(8, 8) </TD>
                     </TR>
                     </TABLE>> fillcolor=aliceblue]
-		50 [label=<
+		52 [label=<
                     <TABLE BORDER="0" CELLBORDER="1"
                     CELLSPACING="0" CELLPADDING="4">
                     <TR>
@@ -666,7 +692,7 @@ strict digraph transformer {
                         <TD COLSPAN="2">(1, 8, 8) </TD>
                     </TR>
                     </TABLE>> fillcolor=aliceblue]
-		51 [label=<
+		53 [label=<
                     <TABLE BORDER="0" CELLBORDER="1"
                     CELLSPACING="0" CELLPADDING="4">
                     <TR>
@@ -681,33 +707,33 @@ strict digraph transformer {
                     </TABLE>> fillcolor=aliceblue]
 		subgraph cluster_8 {
 			fontsize=12 label=MultiHeadSelfAttention labeljust=l style=dashed
-			52 [label=<
-                    <TABLE BORDER="0" CELLBORDER="1"
-                    CELLSPACING="0" CELLPADDING="4">
-                    <TR>
-                        <TD ROWSPAN="2">Attention<BR/>depth:3</TD>
-                        <TD COLSPAN="2">input:</TD>
-                        <TD COLSPAN="2">3 x (1, 8, 6), (1, 8, 8) </TD>
-                    </TR>
-                    <TR>
-                        <TD COLSPAN="2">output: </TD>
-                        <TD COLSPAN="2">(1, 8, 3) </TD>
-                    </TR>
-                    </TABLE>> fillcolor=darkseagreen1]
-			53 [label=<
-                    <TABLE BORDER="0" CELLBORDER="1"
-                    CELLSPACING="0" CELLPADDING="4">
-                    <TR>
-                        <TD ROWSPAN="2">Attention<BR/>depth:3</TD>
-                        <TD COLSPAN="2">input:</TD>
-                        <TD COLSPAN="2">3 x (1, 8, 6), (1, 8, 8) </TD>
-                    </TR>
-                    <TR>
-                        <TD COLSPAN="2">output: </TD>
-                        <TD COLSPAN="2">(1, 8, 3) </TD>
-                    </TR>
-                    </TABLE>> fillcolor=darkseagreen1]
 			54 [label=<
+                    <TABLE BORDER="0" CELLBORDER="1"
+                    CELLSPACING="0" CELLPADDING="4">
+                    <TR>
+                        <TD ROWSPAN="2">Attention<BR/>depth:3</TD>
+                        <TD COLSPAN="2">input:</TD>
+                        <TD COLSPAN="2">3 x (1, 8, 6), (1, 8, 8) </TD>
+                    </TR>
+                    <TR>
+                        <TD COLSPAN="2">output: </TD>
+                        <TD COLSPAN="2">(1, 8, 3) </TD>
+                    </TR>
+                    </TABLE>> fillcolor=darkseagreen1]
+			55 [label=<
+                    <TABLE BORDER="0" CELLBORDER="1"
+                    CELLSPACING="0" CELLPADDING="4">
+                    <TR>
+                        <TD ROWSPAN="2">Attention<BR/>depth:3</TD>
+                        <TD COLSPAN="2">input:</TD>
+                        <TD COLSPAN="2">3 x (1, 8, 6), (1, 8, 8) </TD>
+                    </TR>
+                    <TR>
+                        <TD COLSPAN="2">output: </TD>
+                        <TD COLSPAN="2">(1, 8, 3) </TD>
+                    </TR>
+                    </TABLE>> fillcolor=darkseagreen1]
+			56 [label=<
                     <TABLE BORDER="0" CELLBORDER="1"
                     CELLSPACING="0" CELLPADDING="4">
                     <TR>
@@ -720,7 +746,7 @@ strict digraph transformer {
                         <TD COLSPAN="2">(1, 8, 6) </TD>
                     </TR>
                     </TABLE>> fillcolor=aliceblue]
-			55 [label=<
+			57 [label=<
                     <TABLE BORDER="0" CELLBORDER="1"
                     CELLSPACING="0" CELLPADDING="4">
                     <TR>
@@ -734,7 +760,7 @@ strict digraph transformer {
                     </TR>
                     </TABLE>> fillcolor=darkseagreen1]
 		}
-		56 [label=<
+		58 [label=<
                     <TABLE BORDER="0" CELLBORDER="1"
                     CELLSPACING="0" CELLPADDING="4">
                     <TR>
@@ -747,7 +773,7 @@ strict digraph transformer {
                         <TD COLSPAN="2">(1, 8, 6) </TD>
                     </TR>
                     </TABLE>> fillcolor=darkseagreen1]
-		57 [label=<
+		59 [label=<
                     <TABLE BORDER="0" CELLBORDER="1"
                     CELLSPACING="0" CELLPADDING="4">
                     <TR>
@@ -760,7 +786,7 @@ strict digraph transformer {
                         <TD COLSPAN="2">(1, 8, 6) </TD>
                     </TR>
                     </TABLE>> fillcolor=aliceblue]
-		58 [label=<
+		60 [label=<
                     <TABLE BORDER="0" CELLBORDER="1"
                     CELLSPACING="0" CELLPADDING="4">
                     <TR>
@@ -775,33 +801,33 @@ strict digraph transformer {
                     </TABLE>> fillcolor=darkseagreen1]
 		subgraph cluster_9 {
 			fontsize=12 label=MultiHeadAttention labeljust=l style=dashed
-			59 [label=<
-                    <TABLE BORDER="0" CELLBORDER="1"
-                    CELLSPACING="0" CELLPADDING="4">
-                    <TR>
-                        <TD ROWSPAN="2">Attention<BR/>depth:3</TD>
-                        <TD COLSPAN="2">input:</TD>
-                        <TD COLSPAN="2">(1, 8, 6), 2 x (1, 4, 6) </TD>
-                    </TR>
-                    <TR>
-                        <TD COLSPAN="2">output: </TD>
-                        <TD COLSPAN="2">(1, 8, 3) </TD>
-                    </TR>
-                    </TABLE>> fillcolor=darkseagreen1]
-			60 [label=<
-                    <TABLE BORDER="0" CELLBORDER="1"
-                    CELLSPACING="0" CELLPADDING="4">
-                    <TR>
-                        <TD ROWSPAN="2">Attention<BR/>depth:3</TD>
-                        <TD COLSPAN="2">input:</TD>
-                        <TD COLSPAN="2">(1, 8, 6), 2 x (1, 4, 6) </TD>
-                    </TR>
-                    <TR>
-                        <TD COLSPAN="2">output: </TD>
-                        <TD COLSPAN="2">(1, 8, 3) </TD>
-                    </TR>
-                    </TABLE>> fillcolor=darkseagreen1]
 			61 [label=<
+                    <TABLE BORDER="0" CELLBORDER="1"
+                    CELLSPACING="0" CELLPADDING="4">
+                    <TR>
+                        <TD ROWSPAN="2">Attention<BR/>depth:3</TD>
+                        <TD COLSPAN="2">input:</TD>
+                        <TD COLSPAN="2">(1, 8, 6), 2 x (1, 4, 6) </TD>
+                    </TR>
+                    <TR>
+                        <TD COLSPAN="2">output: </TD>
+                        <TD COLSPAN="2">(1, 8, 3) </TD>
+                    </TR>
+                    </TABLE>> fillcolor=darkseagreen1]
+			62 [label=<
+                    <TABLE BORDER="0" CELLBORDER="1"
+                    CELLSPACING="0" CELLPADDING="4">
+                    <TR>
+                        <TD ROWSPAN="2">Attention<BR/>depth:3</TD>
+                        <TD COLSPAN="2">input:</TD>
+                        <TD COLSPAN="2">(1, 8, 6), 2 x (1, 4, 6) </TD>
+                    </TR>
+                    <TR>
+                        <TD COLSPAN="2">output: </TD>
+                        <TD COLSPAN="2">(1, 8, 3) </TD>
+                    </TR>
+                    </TABLE>> fillcolor=darkseagreen1]
+			63 [label=<
                     <TABLE BORDER="0" CELLBORDER="1"
                     CELLSPACING="0" CELLPADDING="4">
                     <TR>
@@ -814,7 +840,7 @@ strict digraph transformer {
                         <TD COLSPAN="2">(1, 8, 6) </TD>
                     </TR>
                     </TABLE>> fillcolor=aliceblue]
-			62 [label=<
+			64 [label=<
                     <TABLE BORDER="0" CELLBORDER="1"
                     CELLSPACING="0" CELLPADDING="4">
                     <TR>
@@ -828,7 +854,7 @@ strict digraph transformer {
                     </TR>
                     </TABLE>> fillcolor=darkseagreen1]
 		}
-		63 [label=<
+		65 [label=<
                     <TABLE BORDER="0" CELLBORDER="1"
                     CELLSPACING="0" CELLPADDING="4">
                     <TR>
@@ -841,7 +867,7 @@ strict digraph transformer {
                         <TD COLSPAN="2">(1, 8, 6) </TD>
                     </TR>
                     </TABLE>> fillcolor=darkseagreen1]
-		64 [label=<
+		66 [label=<
                     <TABLE BORDER="0" CELLBORDER="1"
                     CELLSPACING="0" CELLPADDING="4">
                     <TR>
@@ -854,7 +880,7 @@ strict digraph transformer {
                         <TD COLSPAN="2">(1, 8, 6) </TD>
                     </TR>
                     </TABLE>> fillcolor=aliceblue]
-		65 [label=<
+		67 [label=<
                     <TABLE BORDER="0" CELLBORDER="1"
                     CELLSPACING="0" CELLPADDING="4">
                     <TR>
@@ -869,7 +895,7 @@ strict digraph transformer {
                     </TABLE>> fillcolor=darkseagreen1]
 		subgraph cluster_10 {
 			fontsize=12 label=FFNN labeljust=l style=dashed
-			66 [label=<
+			68 [label=<
                     <TABLE BORDER="0" CELLBORDER="1"
                     CELLSPACING="0" CELLPADDING="4">
                     <TR>
@@ -882,7 +908,7 @@ strict digraph transformer {
                         <TD COLSPAN="2">(1, 8, 16) </TD>
                     </TR>
                     </TABLE>> fillcolor=darkseagreen1]
-			67 [label=<
+			69 [label=<
                     <TABLE BORDER="0" CELLBORDER="1"
                     CELLSPACING="0" CELLPADDING="4">
                     <TR>
@@ -895,7 +921,7 @@ strict digraph transformer {
                         <TD COLSPAN="2">(1, 8, 16) </TD>
                     </TR>
                     </TABLE>> fillcolor=aliceblue]
-			68 [label=<
+			70 [label=<
                     <TABLE BORDER="0" CELLBORDER="1"
                     CELLSPACING="0" CELLPADDING="4">
                     <TR>
@@ -909,7 +935,7 @@ strict digraph transformer {
                     </TR>
                     </TABLE>> fillcolor=darkseagreen1]
 		}
-		69 [label=<
+		71 [label=<
                     <TABLE BORDER="0" CELLBORDER="1"
                     CELLSPACING="0" CELLPADDING="4">
                     <TR>
@@ -922,7 +948,7 @@ strict digraph transformer {
                         <TD COLSPAN="2">(1, 8, 6) </TD>
                     </TR>
                     </TABLE>> fillcolor=darkseagreen1]
-		70 [label=<
+		72 [label=<
                     <TABLE BORDER="0" CELLBORDER="1"
                     CELLSPACING="0" CELLPADDING="4">
                     <TR>
@@ -935,7 +961,7 @@ strict digraph transformer {
                         <TD COLSPAN="2">(1, 8, 6) </TD>
                     </TR>
                     </TABLE>> fillcolor=aliceblue]
-		71 [label=<
+		73 [label=<
                     <TABLE BORDER="0" CELLBORDER="1"
                     CELLSPACING="0" CELLPADDING="4">
                     <TR>
@@ -949,7 +975,7 @@ strict digraph transformer {
                     </TR>
                     </TABLE>> fillcolor=darkseagreen1]
 	}
-	72 [label=<
+	74 [label=<
                     <TABLE BORDER="0" CELLBORDER="1"
                     CELLSPACING="0" CELLPADDING="4">
                     <TR>
@@ -962,92 +988,96 @@ strict digraph transformer {
                         <TD COLSPAN="2">(1, 8, 16384) </TD>
                     </TR>
                     </TABLE>> fillcolor=darkseagreen1]
-	73 [label=<
+	75 [label=<
                     <TABLE BORDER="0" CELLBORDER="1"
                     CELLSPACING="0" CELLPADDING="4">
                         <TR><TD>output-tensor<BR/>depth:0</TD><TD>(1, 8, 16384)</TD></TR>
                     </TABLE>> fillcolor=lightyellow]
 	0 -> 2
-	2 -> 16
+	2 -> 17
 	3 -> 4
-	4 -> 6
-	5 -> 8
+	4 -> 11
+	5 -> 6
 	6 -> 7
 	7 -> 8
 	8 -> 9
-	8 -> 10
-	8 -> 12
-	9 -> 14
+	9 -> 10
 	10 -> 11
-	12 -> 13
+	11 -> 12
+	11 -> 13
+	12 -> 14
+	13 -> 14
 	14 -> 15
 	15 -> 16
 	16 -> 17
 	17 -> 18
-	18 -> 24
 	18 -> 19
-	18 -> 20
+	19 -> 25
+	19 -> 20
 	19 -> 21
-	20 -> 21
+	20 -> 22
 	21 -> 22
 	22 -> 23
 	23 -> 24
 	24 -> 25
-	25 -> 30
 	25 -> 26
+	26 -> 31
 	26 -> 27
 	27 -> 28
 	28 -> 29
 	29 -> 30
 	30 -> 31
-	1 -> 32
-	32 -> 46
-	33 -> 34
-	34 -> 36
-	35 -> 38
+	31 -> 32
+	1 -> 33
+	33 -> 48
+	34 -> 35
+	35 -> 42
 	36 -> 37
 	37 -> 38
 	38 -> 39
-	38 -> 40
-	38 -> 42
-	39 -> 44
+	39 -> 40
 	40 -> 41
+	41 -> 42
 	42 -> 43
+	42 -> 44
+	43 -> 45
 	44 -> 45
 	45 -> 46
 	46 -> 47
 	47 -> 48
-	48 -> 57
+	48 -> 49
 	49 -> 50
-	50 -> 51
-	48 -> 52
-	48 -> 53
+	50 -> 59
 	51 -> 52
-	51 -> 53
-	52 -> 54
+	52 -> 53
+	50 -> 54
+	50 -> 55
 	53 -> 54
-	54 -> 55
+	53 -> 55
+	54 -> 56
 	55 -> 56
 	56 -> 57
 	57 -> 58
-	58 -> 64
 	58 -> 59
-	58 -> 60
-	31 -> 59
-	31 -> 60
-	59 -> 61
+	59 -> 60
+	60 -> 66
 	60 -> 61
-	61 -> 62
+	60 -> 62
+	32 -> 61
+	32 -> 62
+	61 -> 63
 	62 -> 63
 	63 -> 64
 	64 -> 65
-	65 -> 70
 	65 -> 66
 	66 -> 67
+	67 -> 72
 	67 -> 68
 	68 -> 69
 	69 -> 70
 	70 -> 71
 	71 -> 72
 	72 -> 73
+	73 -> 74
+	74 -> 75
 }

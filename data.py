@@ -58,7 +58,6 @@ class ChatbotDataModule(pl.LightningDataModule):
         self.max_length = max_length
         # 데이터를 모두 메모리로 미리 올리기 때문에 num_workers를 쓰면 오히려 overhead 때문에 더 느려짐
         # self.num_workers = os.cpu_count() if num_workers is None else num_workers
-        self.pin_memory = torch.cuda.is_available()
 
     def prepare_data(self):
         ChatbotDataset.download_if_required(self.data_dir)
@@ -85,10 +84,10 @@ class ChatbotDataModule(pl.LightningDataModule):
         return tokenized_samples
 
     def train_dataloader(self):
-        return DataLoader(self.train_dataset, shuffle=True, batch_size=self.batch_size, pin_memory=self.pin_memory)
+        return DataLoader(self.train_dataset, shuffle=True, batch_size=self.batch_size, pin_memory=self.trainer.on_gpu)
 
     def val_dataloader(self):
-        return DataLoader(self.val_dataset, shuffle=False, batch_size=self.batch_size, pin_memory=self.pin_memory)
+        return DataLoader(self.val_dataset, shuffle=False, batch_size=self.batch_size, pin_memory=self.trainer.on_gpu)
 
     def teardown(self, stage):
         pass
