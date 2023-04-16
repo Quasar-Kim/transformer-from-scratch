@@ -4,7 +4,7 @@ from lightning.pytorch.callbacks import RichModelSummary, RichProgressBar, Model
 from tokenizer import WordPieceTokenizer
 from data import ChatbotDataModule
 from model import LitTransformer
-import torch_xla.debug.metrics import metrics_report # type: ignore
+from torch_xla.debug.metrics import metrics_report # type: ignore
 
 # tested on TPU VM v3-8 (kaggle)
 # 1 epoch = 13s
