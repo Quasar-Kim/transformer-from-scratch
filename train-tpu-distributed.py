@@ -1,13 +1,13 @@
 import lightning.pytorch as pl
 from lightning.pytorch.loggers import WandbLogger
-from lightning.pytorch.callbacks import RichModelSummary, RichProgressBar, ModelCheckpoint
+from lightning.pytorch.callbacks import RichModelSummary, RichProgressBar, ModelCheckpoint, DeviceStatsMonitor
+from lightning.pytorch.profilers import XLAProfiler
 from tokenizer import WordPieceTokenizer
 from data import ChatbotDataModule
 from model import LitTransformer
 
 # tested on TPU VM v3-8 (kaggle)
 # 1 epoch = 13s
-#  -> 64x speedup vs. notebook gpu
 
 if __name__ == '__main__':
     pl.seed_everything(42)
@@ -28,17 +28,20 @@ if __name__ == '__main__':
     trainer = pl.Trainer(
         accelerator='tpu',
         devices=8,
-        max_epochs=50,
+        max_epochs=5,
         check_val_every_n_epoch=5,
         precision='bf16-mixed',
         callbacks=[
             RichModelSummary(),
             RichProgressBar(),
-            ModelCheckpoint(save_top_k=-1, every_n_epochs=5, filename='{epoch}')
+            ModelCheckpoint(save_top_k=-1, every_n_epochs=5, filename='{epoch}'),
+            DeviceStatsMonitor(cpu_stats=True)
         ],
+        profiler=XLAProfiler(9001)
         # BUG: wandb offline 모드를 사용할 경우 timeout 오류 발생
         # 패치가 릴리스될때까지는 offline 모드 사용 불가
         # https://github.com/wandb/wandb/issues/5071
-        logger=WandbLogger(project='transformer_from_scratch', log_model=True)
+        # logger=WandbLogger(project='transformer_from_scratch', log_model=True)
+        
     )
     trainer.fit(model, dm)
