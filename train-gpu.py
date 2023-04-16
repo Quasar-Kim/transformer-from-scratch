@@ -9,7 +9,7 @@ import wandb
 if __name__ == '__main__':
     pl.seed_everything(42)
     tokenizer = WordPieceTokenizer()
-    dm = ChatbotDataModule(batch_size=32, max_length=64, is_gpu=True, tokenizer=tokenizer)
+    dm = ChatbotDataModule(batch_size=64, max_length=64, is_gpu=True, tokenizer=tokenizer)
     model = LitTransformer(
         tokenizer=tokenizer,
         vocab_size=2**14, # 16384
@@ -24,7 +24,7 @@ if __name__ == '__main__':
     )
     trainer = pl.Trainer(
         accelerator='gpu',
-        max_epochs=50,
+        max_epochs=150,
         check_val_every_n_epoch=5,
         precision='16-mixed',
         callbacks=[
