@@ -1,17 +1,6 @@
 import torch
 
-from modules import Attention, MultiHeadAttention, MultiHeadSelfAttention, create_lookahead_mask, binary_mask_to_attention_mask, FFNN, Encoder, Decoder, PositionalEmbedding, GPT, Transformer
-
-class TestAttention:
-    def test_shape(self):
-        n = 4
-        d_model = 10
-        num_head = 2
-        d_k = int(d_model / num_head)
-        x = torch.rand((2, n, d_model))
-        module = Attention(d_model=d_model, d_k=d_k)
-        y = module(x, x, x)
-        assert tuple(y.shape) == (2, n, d_k)
+from modules import MultiHeadAttention, MultiHeadSelfAttention, create_lookahead_mask, binary_mask_to_attention_mask, FFNN, Encoder, Decoder, PositionalEmbedding, GPT, Transformer
 
 class TestMultiHeadAttention:
     def test_shape(self):

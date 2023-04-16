@@ -5,9 +5,6 @@ from tokenizer import WordPieceTokenizer
 from data import ChatbotDataModule
 from model import LitTransformer
 
-# tested on TPU VM v3-8 (kaggle)
-# 1 epoch = 4s
-
 if __name__ == '__main__':
     pl.seed_everything(42)
     tokenizer = WordPieceTokenizer()
@@ -15,11 +12,11 @@ if __name__ == '__main__':
     model = LitTransformer(
         tokenizer=tokenizer,
         vocab_size=2**14, # 16384
-        d_embed=256, # 256
-        d_model=256, # 256
+        d_embed=256,
+        d_model=256,
         num_layers=2,
-        num_heads=8, # 8
-        d_ff=512, # 512
+        num_heads=8,
+        d_ff=512,
         dropout_rate=0.1,
         lr=0.0014,
         num_warmup_steps=4000

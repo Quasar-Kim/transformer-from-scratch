@@ -15,59 +15,55 @@ def binary_mask_to_attention_mask(key_binary_mask: torch.Tensor, query_sequence_
     # mask: (B, N_q, N_kv)
     mask = key_binary_mask.float().unsqueeze(1).repeat(1, query_sequence_length, 1)
     return mask
-
-class Attention(nn.Module):
-    def __init__(self, *, d_model, d_k):
+    
+class MultiHeadAttention(nn.Module):
+    def __init__(self, *, num_heads, d_model):
         super().__init__()
-        assert d_model % d_k == 0
-        self.d_k = d_k # = d_model / n_heads
-        self.q_linear = nn.Linear(in_features=d_model, out_features=d_k)
-        self.k_linear = nn.Linear(in_features=d_model, out_features=d_k)
-        self.v_linear = nn.Linear(in_features=d_model, out_features=d_k)
+        assert d_model % num_heads == 0
+        self.num_heads = num_heads
+        self.d_model = d_model
+        self.d_k = d_model // num_heads # = d_model / n_heads
+        self.q_linear = nn.Linear(in_features=d_model, out_features=d_model)
+        self.k_linear = nn.Linear(in_features=d_model, out_features=d_model)
+        self.v_linear = nn.Linear(in_features=d_model, out_features=d_model)
+        self.dense = nn.Linear(in_features=self.d_model, out_features=self.d_model)
     
     def forward(self, x_q, x_k, x_v, mask=None):
         # x_q: (B, N_q, d_model)
         # x_k: (B, N_kv, d_model)
         # x_v: (B, N_kv, d_model)
         # mask: (B, N_q, N_kv)
-        assert x_k.shape[-2] == x_v.shape[-2]
-        q = self.q_linear(x_q) # (B, N_q, d_k)
-        k = self.k_linear(x_k) # (B, N_kv, d_k)
-        v = self.v_linear(x_v) # (B, N_kv, d_k)
+        assert x_k.shape == x_v.shape
+        b, n_q, _ = x_q.shape
+        q = self.q_linear(x_q) # (B, N_q, d_model)
+        q = self.split_head(q) # (B, heads, N_q, d_k)
+        k = self.k_linear(x_k) # (B, N_kv, d_model)
+        k = self.split_head(k) # (B, heads, N_kv, d_k)
+        v = self.v_linear(x_v) # (B, N_kv, d_model)
+        v = self.split_head(v) # (B, heads, N_kv, d_k)
         scaler = torch.sqrt(torch.tensor(float(self.d_k), device=x_q.device))
-        score = (q @ k.transpose(1, 2)) / scaler # (B, N_q, N_kv)
+        logits = (q @ k.transpose(2, 3)) / scaler # (B, heads, N_q, N_kv)
         if mask is not None:
-            assert mask.shape == score.shape
-            score = self.mask(score, mask) # (B, N_q, N_kv)
-        y = torch.softmax(score, dim=2) @ v # (B, N_q, d_k)
+            mask = mask.unsqueeze(1).repeat(1, self.num_heads, 1, 1) # (B, heads, N_q, N_kv)
+            assert mask.shape == logits.shape
+            logits = self.mask(logits, mask)
+        score = torch.softmax(logits, dim=3) # (B, heads, N_q, N_kv)
+        attn = score @ v # (B, heads, N_q, d_k)
+        attn = attn.transpose(1, 2).reshape((b, n_q, self.d_model)) # (B, N_q, d_model)
+        y = self.dense(attn) # (B, N_q, d_model)
+        return y
+    
+    def split_head(self, x):
+        # x: (B, N, d_model)
+        b, n, _ = x.shape
+        y = x.reshape((b, n, self.num_heads, self.d_k)) # (B, N, num_heads, d_k)
+        y = y.transpose(1, 2) # (B, num_heads, N, d_k)
         return y
     
     def mask(self, score, mask):
         mask = torch.where(mask == 0, -1.e9, 0.)
         score += mask
         return score
-    
-class MultiHeadAttention(nn.Module):
-    def __init__(self, num_heads, d_model):
-        super().__init__()
-        self.num_heads = num_heads
-        self.d_model = d_model
-        self.d_k = int(d_model / num_heads)
-        self.heads = nn.ModuleList([Attention(d_model=d_model, d_k=self.d_k) for _ in range(num_heads)])
-        self.linear = nn.Linear(in_features=d_model, out_features=d_model)
-
-    def forward(self, x_q, x_k, x_v, mask=None):
-        # x_q: (B, N_q, d_model)
-        # x_k: (B, N_kv, d_model)
-        # x_v: (B, N_kv, d_model)
-        # mask: (B, N_q, N_kv)
-        outputs = []
-        for head in self.heads:
-            out = head(x_q, x_k, x_v, mask) # (B, N_q, d_k)
-            outputs.append(out)
-        y = torch.cat(outputs, dim=2) # (B, N_q, d_model)
-        y = self.linear(y) # (B, N_q, d_model)
-        return y
     
 class MultiHeadSelfAttention(MultiHeadAttention):
     def forward(self, x, mask=None):
@@ -96,10 +92,10 @@ class Encoder(nn.Module):
         self.dropout_rate = dropout_rate
         self.self_attention = MultiHeadSelfAttention(num_heads=num_heads, d_model=d_model)
         self.attention_dropout = nn.Dropout(dropout_rate)
-        self.attention_layer_norm = nn.LayerNorm(d_model)
+        self.attention_layer_norm = nn.LayerNorm(d_model, eps=1e-6)
         self.ffnn = FFNN(d_model=d_model, d_ff=d_ff)
         self.ffnn_dropout = nn.Dropout(dropout_rate)
-        self.ffnn_layer_norm = nn.LayerNorm(d_model)
+        self.ffnn_layer_norm = nn.LayerNorm(d_model, eps=1e-6)
     
     def forward(self, x, binary_mask=None):
         y = self.forward_self_attention(x, binary_mask)
@@ -123,12 +119,22 @@ class GPTDecoder(Encoder):
     # TODO: implement gpt decoder with causal mask
     pass
 
-class Decoder(Encoder):
+class Decoder(nn.Module):
     def __init__(self, num_heads, d_model, d_ff, dropout_rate=0.):
-        super().__init__(num_heads, d_model, d_ff, dropout_rate)
+        super().__init__()
+        self.num_heads = num_heads
+        self.d_model = d_model
+        self.d_ff = d_ff
+        self.dropout_rate = dropout_rate
+        self.self_attention = MultiHeadSelfAttention(num_heads=num_heads, d_model=d_model)
+        self.self_attention_dropout = nn.Dropout(dropout_rate)
+        self.self_attention_layer_norm = nn.LayerNorm(d_model, eps=1e-6)
         self.enc_dec_attention = MultiHeadAttention(num_heads=num_heads, d_model=d_model)
         self.enc_dec_attention_dropout = nn.Dropout(dropout_rate)
-        self.enc_dec_attention_layer_norm = nn.LayerNorm(d_model)
+        self.enc_dec_attention_layer_norm = nn.LayerNorm(d_model, eps=1e-6)
+        self.ffnn = FFNN(d_model=d_model, d_ff=d_ff)
+        self.ffnn_dropout = nn.Dropout(dropout_rate)
+        self.ffnn_layer_norm = nn.LayerNorm(d_model, eps=1e-6)
   
     def forward(self, x, enc_y, enc_binary_mask=None, dec_binary_mask=None):
         y = self.forward_self_attention(x, dec_binary_mask)
@@ -140,12 +146,12 @@ class Decoder(Encoder):
         lookahead_mask = create_lookahead_mask(x)
         if dec_binary_mask is not None:
             dec_padding_mask = binary_mask_to_attention_mask(dec_binary_mask, query_sequence_length=x.shape[1]) if dec_binary_mask is not None else None
-            mask = torch.maximum(dec_padding_mask, lookahead_mask)
+            mask = torch.minimum(dec_padding_mask, lookahead_mask)
         else:
             mask = lookahead_mask
         y = self.self_attention(x, mask)
-        y = self.attention_dropout(y)
-        y = self.attention_layer_norm(x + y)
+        y = self.self_attention_dropout(y)
+        y = self.self_attention_layer_norm(x + y)
         return y
     
     def forward_enc_dec_attention(self, x, enc_y, enc_binary_mask):
@@ -153,6 +159,12 @@ class Decoder(Encoder):
         y = self.enc_dec_attention(x, enc_y, enc_y, mask)
         y = self.enc_dec_attention_dropout(y)
         y = self.enc_dec_attention_layer_norm(y + x)
+        return y
+    
+    def forward_ffnn(self, x):
+        y = self.ffnn(x)
+        y = self.ffnn_dropout(y)
+        y = self.ffnn_layer_norm(x + y)
         return y
     
 class PositionalEmbedding(nn.Module):
@@ -164,6 +176,8 @@ class PositionalEmbedding(nn.Module):
     def forward(self, x):
         # x: (B, N)
         y = self.embedding(x) # y: (B, N, d_embed)
+        # why? - gradient vanishing 문제를 완화나는 테크닉이라고 함, implementation detail인듯
+        y *= torch.sqrt(torch.tensor(float(self.d_embed)))
         y = self.encode_position(y)
         return y
 

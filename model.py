@@ -58,7 +58,6 @@ class LitTransformer(pl.LightningModule):
                 pred_id = logits[0, -1].argmax()
                 inp['dec_x'] = torch.cat((inp['dec_x'], pred_id.unsqueeze(0).unsqueeze(0)), dim=1)
                 answer = self.tokenizer.decode(inp['dec_x'].squeeze()[1:])
-                print(answer)
                 if pred_id.item() == self.tokenizer.eos_token_id:
                     print('got eos token')
                     break
