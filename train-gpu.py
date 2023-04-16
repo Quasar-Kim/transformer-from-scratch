@@ -1,6 +1,6 @@
 import lightning.pytorch as pl
 from lightning.pytorch.loggers import WandbLogger
-from lightning.pytorch.callbacks import RichModelSummary, RichProgressBar, ModelCheckpoint
+from lightning.pytorch.callbacks import RichModelSummary, ModelCheckpoint
 from tokenizer import WordPieceTokenizer
 from data import ChatbotDataModule
 from model import LitTransformer
@@ -29,7 +29,6 @@ if __name__ == '__main__':
         precision='16-mixed',
         callbacks=[
             RichModelSummary(), 
-            RichProgressBar(),
             ModelCheckpoint(save_top_k=-1, every_n_epochs=5, filename='{epoch}')
         ],
         logger=WandbLogger(project='transformer_from_scratch', offline=True)

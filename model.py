@@ -79,6 +79,7 @@ class LitTransformer(pl.LightningModule):
         optimizer = optim.Adam(self.parameters(), lr=self.hparams.lr, betas=(0.9, 0.98), eps=1e-9)
         lr_scheduler = get_inverse_sqrt_schedule(optimizer, num_warmup_steps=self.hparams.num_warmup_steps)
         return { 'optimizer': optimizer, 'lr_scheduler': lr_scheduler }
+        # return optimizer
     
     def on_train_batch_end(self, outputs, batch, batch_idx):
         pass
