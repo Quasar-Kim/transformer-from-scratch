@@ -50,12 +50,13 @@ class ChatbotDataset:
         }
 
 class ChatbotDataModule(pl.LightningDataModule):
-    def __init__(self, batch_size, tokenizer, max_length=128, data_dir='./chatbot_dataset'):
+    def __init__(self, batch_size, tokenizer, max_length=128, data_dir='./chatbot_dataset', is_gpu=False):
         super().__init__()
         self.batch_size = batch_size
         self.tokenizer = tokenizer
         self.data_dir = data_dir
         self.max_length = max_length
+        self.pin_memory = is_gpu
         # 데이터를 모두 메모리로 미리 올리기 때문에 num_workers를 쓰면 오히려 overhead 때문에 더 느려짐
         # self.num_workers = os.cpu_count() if num_workers is None else num_workers
 
@@ -84,10 +85,10 @@ class ChatbotDataModule(pl.LightningDataModule):
         return tokenized_samples
 
     def train_dataloader(self):
-        return DataLoader(self.train_dataset, shuffle=True, batch_size=self.batch_size, pin_memory=self.trainer.on_gpu)
+        return DataLoader(self.train_dataset, shuffle=True, batch_size=self.batch_size, pin_memory=self.pin_memory)
 
     def val_dataloader(self):
-        return DataLoader(self.val_dataset, shuffle=False, batch_size=self.batch_size, pin_memory=self.trainer.on_gpu)
+        return DataLoader(self.val_dataset, shuffle=False, batch_size=self.batch_size, pin_memory=self.pin_memory)
 
     def teardown(self, stage):
         pass
