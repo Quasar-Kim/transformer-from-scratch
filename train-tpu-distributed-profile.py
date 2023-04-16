@@ -4,6 +4,7 @@ from lightning.pytorch.callbacks import RichModelSummary, RichProgressBar, Model
 from tokenizer import WordPieceTokenizer
 from data import ChatbotDataModule
 from model import LitTransformer
+import torch_xla.debug.metrics import metrics_report # type: ignore
 
 # tested on TPU VM v3-8 (kaggle)
 # 1 epoch = 13s
@@ -27,7 +28,7 @@ if __name__ == '__main__':
     trainer = pl.Trainer(
         accelerator='tpu',
         devices=8,
-        max_epochs=50,
+        max_epochs=5,
         check_val_every_n_epoch=5,
         precision='bf16-mixed',
         callbacks=[
@@ -41,3 +42,4 @@ if __name__ == '__main__':
         logger=WandbLogger(project='transformer_from_scratch', log_model=True)
     )
     trainer.fit(model, dm)
+    metrics_report()
