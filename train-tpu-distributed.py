@@ -24,7 +24,7 @@ if __name__ == '__main__':
     trainer = pl.Trainer(
         accelerator='tpu',
         devices=8,
-        max_epochs=150,
+        max_epochs=300,
         check_val_every_n_epoch=5,
         precision='bf16-mixed',
         callbacks=[

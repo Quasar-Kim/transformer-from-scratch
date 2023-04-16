@@ -5,7 +5,6 @@ from torch import optim
 import lightning.pytorch as pl
 from transformers import get_inverse_sqrt_schedule
 from modules import Transformer
-from torchmetrics.classification import MulticlassAccuracy
 
 class LitTransformer(pl.LightningModule):
     def __init__(self, *, tokenizer, lr, num_warmup_steps, **kwargs):
@@ -14,9 +13,7 @@ class LitTransformer(pl.LightningModule):
         self.tokenizer = tokenizer
         self.model = Transformer(**kwargs)
         self.train_losses = []
-        self.train_acc = MulticlassAccuracy(num_classes=self.hparams.vocab_size)
         self.validation_losses = []
-        self.val_acc = MulticlassAccuracy(num_classes=self.hparams.vocab_size)
     
     def forward(self, enc_x, dec_x, enc_x_padding_mask=None, dec_x_padding_mask=None):
         return self.model(enc_x, dec_x, enc_x_padding_mask, dec_x_padding_mask)
@@ -26,8 +23,6 @@ class LitTransformer(pl.LightningModule):
         logits = self(**batch)
         loss = self.loss(logits, y_true)
         self.train_losses.append(loss)
-        y_preds = logits.argmax(dim=2)
-        self.train_acc(y_preds, y_true)
         return {'loss': loss}
     
     def validation_step(self, batch, batch_idx):
@@ -35,8 +30,6 @@ class LitTransformer(pl.LightningModule):
         logits = self(**batch)
         loss = self.loss(logits, y_true)
         self.validation_losses.append(loss)
-        y_preds = logits.argmax(dim=2)
-        self.val_acc(y_preds, y_true)
         return {'loss': loss}
     
     @contextmanager
@@ -91,12 +84,10 @@ class LitTransformer(pl.LightningModule):
         # loss -> mean of local losses
         # sync_dist=True -> will reduce metrics across processes (as specified by reduce_fx, which is by default torch.mean())
         self.log('train_loss', loss, on_epoch=True, sync_dist=True, prog_bar=True)
-        self.log('train_acc', self.train_acc, on_epoch=True, prog_bar=True)
 
     def on_validation_epoch_end(self, *args):
         loss = torch.stack(self.validation_losses).mean()
         self.validation_losses.clear()
         self.log('val_loss', loss, on_epoch=True, sync_dist=True)
-        self.log('val_acc', self.val_acc, on_epoch=True)
 
     
